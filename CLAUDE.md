@@ -54,7 +54,7 @@ When a room needs something new, prefer adding a hook, a room-API method, or a n
 
 ## Art
 
-Sprites are 16×16 arrays of strings, one character per pixel, with a palette mapping characters to colors (`.` = transparent). Characters have 4 directions × 2 walk frames (left may mirror right). Shared colors live in `src/art/palette.js`. After adding or changing a sprite, look at it rendered in `sprites.html` (take a screenshot). Don't judge pixel art from the strings alone.
+Sprites are 16×16 arrays of strings, one character per pixel, with a palette mapping characters to colors (`.` = transparent). Characters have 4 directions × 2 walk frames (left may mirror right). Shared colors live in `src/art/palette.js`. For any sprite work, use the `drawing-sprites` skill (`.claude/skills/drawing-sprites/`). Its `preview.mjs` renders sprites zoomed and in-game beside the existing cast. Don't judge pixel art from the strings alone.
 
 ## Verification
 
