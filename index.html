@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Through the Wardrobe</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; }
+  body { display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  canvas { display: block; image-rendering: pixelated; }
+  #boot-error { position: fixed; inset: 0; margin: 0; padding: 16px; color: #ff9aa8; background: #2a0d12; font: 14px/1.4 monospace; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<canvas id="game" aria-label="Through the Wardrobe game"></canvas>
+<pre id="boot-error" hidden></pre>
+<script>
+  // Shows load-time problems (for example a typo in a room file) instead of a blank page.
+  function showBootError(message) {
+    const el = document.getElementById('boot-error');
+    el.hidden = false;
+    el.textContent += message + '\n';
+  }
+  window.addEventListener('error', (e) => showBootError(e.message || 'Something failed to load.'));
+</script>
+<script type="module" src="src/main.js"
+  onerror="showBootError('Could not load the game. If you opened index.html directly, run a local server instead (see README.md).')"></script>
+</body>
+</html>
