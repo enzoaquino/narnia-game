@@ -22,7 +22,7 @@ export class VictoryScene {
     r.text('Lucy made it all the way through Narnia.', VIEW_WIDTH / 2, 76, { align: 'center', color: '#e8f0f8' });
     r.text('Thanks for playing!', VIEW_WIDTH / 2, 90, { align: 'center', color: '#e8f0f8' });
     if (Math.floor(this.time * 2) % 2 === 0) {
-      r.text('Press Space to play again', VIEW_WIDTH / 2, 140, { align: 'center', bold: true, color: '#10141f' });
+      r.text(this.game.touch ? 'Tap Sword to play again' : 'Press Space to play again', VIEW_WIDTH / 2, 140, { align: 'center', bold: true, color: '#10141f' });
     }
   }
 }

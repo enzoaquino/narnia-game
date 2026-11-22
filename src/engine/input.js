@@ -1,4 +1,5 @@
 // Keyboard → game actions. Only this file touches keyboard events.
+// The on-screen touch controls (touch.js) feed the same Input using the Touch* codes below.
 
 export const KEY_ACTIONS = {
   ArrowUp: 'up',
@@ -13,6 +14,12 @@ export const KEY_ACTIONS = {
   KeyE: 'interact',
   Enter: 'interact',
   KeyN: 'newGame',
+  TouchUp: 'up',
+  TouchDown: 'down',
+  TouchLeft: 'left',
+  TouchRight: 'right',
+  TouchSword: 'attack',
+  TouchTalk: 'interact',
 };
 
 export class Input {

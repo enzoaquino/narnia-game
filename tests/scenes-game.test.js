@@ -97,3 +97,46 @@ test('victory waits briefly, then Space starts a new game', () => {
   v.update(STEP, press('attack'));
   assert.deepEqual(game.calls, [['start', 0]]);
 });
+
+/** Records the strings a scene draws. */
+function textsOf(scene) {
+  const texts = [];
+  scene.render({ rect() {}, sprite() {}, text: (s) => texts.push(s) });
+  return texts;
+}
+
+test('title shows keyboard hints until the screen is touched', () => {
+  const game = fakeGame({ saved: { roomIndex: 1 } });
+  const keys = textsOf(new TitleScene(game));
+  assert.ok(keys.includes('Press Space to continue (room 2)'));
+  assert.ok(keys.includes('Press N for a new game'));
+  assert.ok(keys.includes('Arrows/WASD move · Space sword · E talk'));
+  game.touch = true;
+  const touch = textsOf(new TitleScene(game));
+  assert.ok(touch.includes('Tap Sword to continue (room 2)'));
+  assert.ok(touch.includes('Tap Talk for a new game'));
+  assert.ok(touch.includes('D-pad move · Sword · Talk'));
+  assert.ok(textsOf(new TitleScene(Object.assign(fakeGame(), { touch: true }))).includes('Tap Sword to start'));
+});
+
+test('title on touch: Talk starts a new game when there is a save to continue', () => {
+  const game = Object.assign(fakeGame({ saved: { roomIndex: 1 } }), { touch: true });
+  new TitleScene(game).update(STEP, press('interact'));
+  assert.deepEqual(game.calls, [['clear'], ['start', 0]]);
+  const fresh = Object.assign(fakeGame(), { touch: true });
+  new TitleScene(fresh).update(STEP, press('interact'));
+  assert.deepEqual(fresh.calls, [['start', 0]]);
+});
+
+test('title with a keyboard: E still continues from the save', () => {
+  const game = fakeGame({ saved: { roomIndex: 1 } });
+  new TitleScene(game).update(STEP, press('interact'));
+  assert.deepEqual(game.calls, [['start', 1]]);
+});
+
+test('victory hint follows the input in use', () => {
+  const game = fakeGame();
+  assert.ok(textsOf(new VictoryScene(game)).includes('Press Space to play again'));
+  game.touch = true;
+  assert.ok(textsOf(new VictoryScene(game)).includes('Tap Sword to play again'));
+});

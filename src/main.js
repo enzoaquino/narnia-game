@@ -1,5 +1,6 @@
 import { STEP, MAX_FRAME } from './config.js';
 import { Input, attachKeyboard } from './engine/input.js';
+import { attachTouch } from './engine/touch.js';
 import { Renderer } from './engine/renderer.js';
 import { createSpriteCache } from './engine/sprites.js';
 import { SceneStack } from './engine/scenes.js';
@@ -28,7 +29,15 @@ const game = {
     game.save.clear();
     scenes.reset(new VictoryScene(game));
   },
+  touch: false, // true once the on-screen controls are in use; scenes show touch hints
 };
+
+attachTouch(input, {
+  dpad: document.getElementById('dpad'),
+  sword: document.getElementById('btn-sword'),
+  talk: document.getElementById('btn-talk'),
+  onFirstTouch: () => { game.touch = true; },
+});
 
 let running = true;
 

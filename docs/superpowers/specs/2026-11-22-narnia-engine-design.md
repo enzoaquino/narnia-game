@@ -29,7 +29,7 @@ added later as data files once the outline arrives.
 
 **Out of scope (for now)**
 - Rooms 2–5 content.
-- Touch controls, gamepad support.
+- Gamepad support.
 - Sound and music.
 - Scrolling maps, multi-screen rooms.
 - Multiple playable characters.
@@ -42,7 +42,7 @@ added later as data files once the outline arrives.
 | Movement | Free (pixel) movement with tile-based wall collision | Matches classic Zelda feel; combat feels responsive. |
 | Core loop | Explore + simple combat | Most Zelda-like and flexible for later rooms. |
 | Art | 16×16 pixel art defined as strings in JS, scaled up crisply | No image files to manage; easy to edit and iterate. |
-| Controls | Keyboard only | Target devices are laptops/Chromebooks. |
+| Controls | Keyboard, plus on-screen touch controls on phones and tablets | Laptops/Chromebooks use the keyboard; touch (added later) lets the game run on phones and tablets too. |
 | Room format | One JS module per room: ASCII map + entity list + hooks | Adding a room is mostly data entry; hooks allow per-room rules without engine changes. |
 
 ## Gameplay
@@ -50,17 +50,34 @@ added later as data files once the outline arrives.
 ### Screen
 - Room fills the screen: **16 × 11 tiles**, each tile **16 × 16 px**.
 - Native resolution 256 × 176 for the room, plus a **16 px HUD strip** on
-  top → 256 × 192 total. Scaled up by the largest integer factor that fits
-  the window (minimum 2×), with image smoothing off.
+  top → 256 × 192 total. Scaled up by the largest integer factor (in device
+  pixels) that fits the space left for the game, minimum 2×, with image smoothing
+  off. That space is the whole window, or what the touch controls leave free.
 
 ### Controls
-| Action | Keys |
-|---|---|
-| Move | Arrow keys or WASD |
-| Attack (sword) | Space |
-| Interact / advance dialogue | E or Enter |
-| Start / confirm on title & victory screens | Space or Enter |
-| New game (title screen only) | N |
+| Action | Keys | Touch |
+|---|---|---|
+| Move | Arrow keys or WASD | D-pad |
+| Attack (sword) | Space | Sword button |
+| Interact / advance dialogue | E or Enter | Talk button |
+| Start / confirm on title & victory screens | Space or Enter | Sword (or Talk) |
+| New game (title screen only) | N | Talk, when there is a save to continue |
+
+### Touch controls
+- On-screen D-pad on the left and Sword/Talk buttons on the right, as HTML
+  elements beside the canvas (markup and layout in `index.html`). Landscape:
+  D-pad | game | buttons. Portrait: game on top, controls below.
+- Hidden until the device reports a coarse pointer or the screen is touched;
+  then `<body>` gets the `touch` class and the game context's `touch` flag is
+  set. Keyboard-only devices look unchanged.
+- The D-pad follows the finger until it lifts: a dead zone in the middle
+  (`TOUCH.deadZone` of the radius), then eight 45° sectors, so diagonals work
+  and sliding between directions needs no lift. Multi-touch: move and swing at
+  once.
+- Touches feed the same `Input` as the keyboard via `Touch*` codes, so game
+  logic doesn't know which was used. Only the title and victory screens check
+  the `touch` flag, to show touch wording ("Tap Sword to start").
+- Taps never scroll, zoom, select text or open the long-press menu.
 
 ### Player (Lucy)
 - Moves in 4 directions at a fixed speed; diagonal input allowed, normalized
@@ -147,6 +164,7 @@ src/
   engine/
     collision.js               overlaps, boxHitsSolid, moveAndSlide (+ corner nudge)
     input.js                   Input (key→action state), attachKeyboard (DOM)
+    touch.js                   TOUCH_CODES, dpadDirections, attachTouch (DOM: on-screen controls)
     sprites.js                 parseSprite, flipH, flipV, resolveSprite, createSpriteCache (DOM)
     text.js                    wrapText
     scenes.js                  SceneStack
@@ -183,8 +201,9 @@ PLAYTEST.md
 ```
 
 ### Separation rule
-Only `engine/renderer.js` and `engine/sprites.js` touch the canvas/DOM, and
-`engine/input.js` touches keyboard events. All game logic (collision, player,
+Only `engine/renderer.js`, `engine/sprites.js` and `engine/touch.js` touch the
+canvas/DOM; `engine/input.js` touches keyboard events and `engine/touch.js`
+touch/pointer events. All game logic (collision, player,
 enemies, room rules, validation) is plain JS operating on plain data, so it
 can be tested in Node without a browser.
 

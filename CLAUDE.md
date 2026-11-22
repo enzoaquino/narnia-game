@@ -14,7 +14,7 @@ A small top-down action-adventure game in the style of classic overhead Zelda, t
 - **No build step, no npm dependencies.** Plain HTML and JavaScript ES modules on a `<canvas>`. The repo root is deployed as-is to GitHub Pages. Don't add a `package.json`, bundler, TypeScript, or framework without asking first.
 - **Relative paths only** for modules and assets. The site is served from `username.github.io/<repo>/`, so a leading `/` breaks it.
 - **No external runtime requests.** No CDNs, fonts or analytics. Everything ships in the repo.
-- **Keyboard only.** Arrows/WASD to move, Space to attack, E/Enter to interact. No touch, gamepad or sound unless asked.
+- **Keyboard, plus touch on phones and tablets.** Arrows/WASD to move, Space to attack, E/Enter to interact; on touch screens an on-screen D-pad with Sword and Talk buttons (`src/engine/touch.js`). No gamepad or sound unless asked.
 - **Content is for kids.** Keep text, combat and visuals gentle and age-appropriate.
 
 ## Commands
@@ -32,7 +32,7 @@ source ~/.nvm/nvm.sh && nvm use 24 >/dev/null && node --test
 
 ## Architecture rules
 
-- **Only `src/engine/renderer.js` and `src/engine/sprites.js` touch the canvas/DOM, and only `src/engine/input.js` touches keyboard events.** Everything else (collision, entities, room logic, validation, sprite *parsing*) is plain JS on plain data, so it runs in Node tests. Keep it that way. If game logic needs to draw, add a renderer helper.
+- **Only `src/engine/renderer.js`, `src/engine/sprites.js` and `src/engine/touch.js` touch the canvas/DOM; only `src/engine/input.js` touches keyboard events and only `touch.js` touches pointer/touch events.** Everything else (collision, entities, room logic, validation, sprite *parsing*) is plain JS on plain data, so it runs in Node tests. Keep it that way. If game logic needs to draw, add a renderer helper.
 - `src/engine/` is game-agnostic plumbing. `src/game/` is gameplay: entities, scenes, room runtime. `src/art/` holds sprite data only. `src/rooms/` holds room definitions only.
 - Tunable numbers (speeds, timings, sizes, damage) live in `src/config.js`, not inline.
 - Grid: 16×16 px tiles, 16×11 tile rooms, 16 px HUD strip on top (256×192 native), scaled up by an integer factor with smoothing off.

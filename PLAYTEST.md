@@ -9,6 +9,15 @@ Run through the general checks and the section for any room you changed. Serve l
 - [ ] Losing all hearts shows "Try again" and restarts the current room at full health.
 - [ ] Finishing the last room shows the victory screen; Space starts over from room 1.
 
+## Touch (phone or tablet; real device, not just browser emulation)
+- [ ] The D-pad and Sword/Talk buttons appear on their own. On a laptop they don't.
+- [ ] Turning the device works both ways: landscape has the D-pad and buttons beside the game, portrait has the game on top.
+- [ ] Title says "Tap Sword to start"; Sword starts, Talk moves the dialogue along.
+- [ ] Sliding a thumb around the D-pad changes direction without lifting, and diagonals work.
+- [ ] Holding a direction and tapping Sword at the same time swings while moving.
+- [ ] Tapping or holding never scrolls, zooms, selects text or pops up a menu.
+- [ ] Switching to another app mid-walk and back: Lucy isn't stuck walking.
+
 ## Room 1: Lantern Waste
 - [ ] Lucy's intro line plays on entry (and not again after a retry).
 - [ ] Lucy starts below the wardrobe, facing down.

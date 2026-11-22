@@ -59,3 +59,7 @@ export const DIALOGUE = {
   maxCharsPerLine: 44,
   linesPerPage: 3,
 };
+
+export const TOUCH = {
+  deadZone: 0.25, // fraction of the D-pad radius where a finger presses nothing
+};

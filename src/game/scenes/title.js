@@ -10,7 +10,9 @@ export class TitleScene {
 
   update(dt, input) {
     this.time += dt;
-    if (input.wasPressed('newGame')) {
+    // On touch there is no N key, so Talk starts over when there's a save to continue.
+    const touchNewGame = this.game.touch && this.resumeIndex > 0 && input.wasPressed('interact');
+    if (input.wasPressed('newGame') || touchNewGame) {
       this.game.save.clear();
       this.game.start(0);
     } else if (input.wasPressed('attack') || input.wasPressed('interact')) {
@@ -26,11 +28,15 @@ export class TitleScene {
     r.sprite('lamppost', VIEW_WIDTH / 2 - 8, 96);
     const dark = '#10141f';
     if (Math.floor(this.time * 2) % 2 === 0) {
-      const label = this.resumeIndex > 0 ? `Press Space to continue (room ${this.resumeIndex + 1})` : 'Press Space to start';
+      const go = this.game.touch ? 'Tap Sword' : 'Press Space';
+      const label = this.resumeIndex > 0 ? `${go} to continue (room ${this.resumeIndex + 1})` : `${go} to start`;
       r.text(label, VIEW_WIDTH / 2, 124, { align: 'center', bold: true, color: dark });
     }
-    if (this.resumeIndex > 0) r.text('Press N for a new game', VIEW_WIDTH / 2, 138, { align: 'center', color: dark });
-    r.text('Arrows/WASD move · Space sword · E talk', VIEW_WIDTH / 2, 172, { align: 'center', color: dark });
+    if (this.resumeIndex > 0) {
+      r.text(this.game.touch ? 'Tap Talk for a new game' : 'Press N for a new game', VIEW_WIDTH / 2, 138, { align: 'center', color: dark });
+    }
+    const hints = this.game.touch ? 'D-pad move · Sword · Talk' : 'Arrows/WASD move · Space sword · E talk';
+    r.text(hints, VIEW_WIDTH / 2, 172, { align: 'center', color: dark });
   }
 }
 

@@ -14,12 +14,14 @@ Then open <http://localhost:8000>. The sprite preview page is at <http://localho
 
 ## Controls
 
-| Action | Keys |
-|---|---|
-| Move | Arrow keys or WASD |
-| Sword | Space |
-| Talk / next line | E or Enter |
-| New game (title screen) | N |
+| Action | Keys | Touch screen |
+|---|---|---|
+| Move | Arrow keys or WASD | D-pad (left) |
+| Sword | Space | Sword button (right) |
+| Talk / next line | E or Enter | Talk button (right) |
+| New game (title screen) | N | Talk |
+
+On phones and tablets the touch controls appear by themselves (in either orientation). On a laptop they stay hidden.
 
 ## Run the tests
 

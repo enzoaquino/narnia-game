@@ -2,18 +2,66 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="data:,">
 <title>Through the Wardrobe</title>
 <style>
-  html, body { margin: 0; height: 100%; background: #000; }
-  body { display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  html, body { margin: 0; height: 100%; background: #000; overscroll-behavior: none; }
+  body {
+    height: 100vh; height: 100dvh; box-sizing: border-box; overflow: hidden;
+    display: grid; grid-template: "stage" 1fr / 1fr;
+    /* Taps and holds never scroll, zoom, select text or open the long-press menu. */
+    touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+  }
+  #stage { grid-area: stage; min-width: 0; min-height: 0; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; }
   canvas { display: block; image-rendering: pixelated; }
+
+  /* Touch controls: hidden until touch.js adds the "touch" class to <body>. */
+  .ctl { display: none; }
+  body.touch {
+    --ctl: clamp(112px, 36vmin, 190px);
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    grid-template: "pad stage btns" 1fr / calc(var(--ctl) + 24px) 1fr calc(var(--ctl) + 24px);
+  }
+  @media (orientation: portrait) {
+    body.touch { grid-template: "stage stage" 1fr "pad btns" calc(var(--ctl) + 32px) / 1fr 1fr; }
+    /* Game Boy style: screen at the top, controls at the bottom. */
+    body.touch #stage { align-items: flex-start; padding-top: 12px; }
+  }
+  body.touch .ctl { display: flex; align-items: center; justify-content: center; }
+  #pad { grid-area: pad; }
+  #btns { grid-area: btns; flex-direction: column; gap: calc(var(--ctl) * 0.08); }
+  #dpad { position: relative; width: var(--ctl); height: var(--ctl); border-radius: 50%;
+    background: rgba(232, 240, 248, 0.06); border: 2px solid rgba(232, 240, 248, 0.22); }
+  #dpad span { position: absolute; width: 32%; height: 32%; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(232, 240, 248, 0.14); color: #e8f0f8; font: calc(var(--ctl) * 0.13) sans-serif; }
+  #dpad .up { left: 34%; top: 3%; }
+  #dpad .down { left: 34%; bottom: 3%; }
+  #dpad .left { left: 3%; top: 34%; }
+  #dpad .right { right: 3%; top: 34%; }
+  #dpad[data-dirs~="up"] .up, #dpad[data-dirs~="down"] .down,
+  #dpad[data-dirs~="left"] .left, #dpad[data-dirs~="right"] .right { background: #ffe27a; color: #10141f; }
+  .btn { width: calc(var(--ctl) * 0.46); height: calc(var(--ctl) * 0.46); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font: bold calc(var(--ctl) * 0.085) "Courier New", Courier, monospace;
+    border: 2px solid rgba(255, 255, 255, 0.45); }
+  #btn-sword { background: rgba(214, 50, 74, 0.55); }
+  #btn-talk { background: rgba(63, 111, 181, 0.6); }
+  .btn.on { filter: brightness(1.5); transform: scale(0.94); }
   #boot-error { position: fixed; inset: 0; margin: 0; padding: 16px; color: #ff9aa8; background: #2a0d12; font: 14px/1.4 monospace; white-space: pre-wrap; }
 </style>
 </head>
 <body>
-<canvas id="game" aria-label="Through the Wardrobe game"></canvas>
+<div id="stage"><canvas id="game" aria-label="Through the Wardrobe game"></canvas></div>
+<div id="pad" class="ctl" aria-hidden="true">
+  <div id="dpad"><span class="up">▲</span><span class="left">◀</span><span class="right">▶</span><span class="down">▼</span></div>
+</div>
+<div id="btns" class="ctl" aria-hidden="true">
+  <div id="btn-talk" class="btn">TALK</div>
+  <div id="btn-sword" class="btn">SWORD</div>
+</div>
 <pre id="boot-error" hidden></pre>
 <script>
   // Shows load-time problems (for example a typo in a room file) instead of a blank page.

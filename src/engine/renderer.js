@@ -14,6 +14,10 @@ export class Renderer {
     this.lastError = null;
     this.resize();
     window.addEventListener('resize', () => this.resize());
+    // The canvas fills its container, which shrinks when the touch controls appear.
+    if (window.ResizeObserver && canvas.parentElement) {
+      new ResizeObserver(() => this.resize()).observe(canvas.parentElement);
+    }
     this.watchPixelRatio();
   }
 
@@ -32,7 +36,10 @@ export class Renderer {
     // device pixels (fractional dpr such as 1.25 or 1.6 would otherwise give uneven pixels).
     // MIN_SCALE means "at least this many device pixels per game pixel".
     const dpr = window.devicePixelRatio || 1;
-    const fit = Math.floor(Math.min((window.innerWidth * dpr) / VIEW_WIDTH, (window.innerHeight * dpr) / VIEW_HEIGHT));
+    const box = this.canvas.parentElement;
+    const width = box?.clientWidth || window.innerWidth;
+    const height = box?.clientHeight || window.innerHeight;
+    const fit = Math.floor(Math.min((width * dpr) / VIEW_WIDTH, (height * dpr) / VIEW_HEIGHT));
     const s = Math.max(MIN_SCALE, fit);
     this.canvas.width = VIEW_WIDTH * s; // setting width clears the canvas
     this.canvas.height = VIEW_HEIGHT * s;
