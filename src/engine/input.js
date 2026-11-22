@@ -57,11 +57,22 @@ export class Input {
   }
 }
 
+/** Browser shortcuts (Cmd+A, Ctrl+W, Alt+...) aren't game input. */
+export function shouldHandleKeyEvent(e) {
+  return !(e.metaKey || e.ctrlKey || e.altKey);
+}
+
 export function attachKeyboard(input, target = window) {
   target.addEventListener('keydown', (e) => {
+    if (!shouldHandleKeyEvent(e)) return;
     if (input.keyDown(e.code)) e.preventDefault();
   });
   target.addEventListener('keyup', (e) => {
+    // On macOS, keyups for other keys never arrive while Cmd is held, so let go of everything.
+    if (e.key === 'Meta') {
+      input.clear();
+      return;
+    }
     if (input.keyUp(e.code)) e.preventDefault();
   });
   target.addEventListener('blur', () => input.clear());

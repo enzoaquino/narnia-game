@@ -23,7 +23,7 @@ Then open <http://localhost:8000>. The sprite preview page is at <http://localho
 
 ## Run the tests
 
-The tests use Node's built-in test runner (Node 18+, no packages):
+The tests use Node's built-in test runner (Node 22.7 or newer, no packages):
 
 ```sh
 source ~/.nvm/nvm.sh && nvm use 24 >/dev/null && node --test
@@ -60,3 +60,4 @@ Sprites live in `src/art/` as arrays of strings, with one character per pixel. T
 - **Blank page or "Could not load the game":** you probably opened `index.html` directly. Use the local server above.
 - **A red error screen:** it names the room or sprite with the problem and what's wrong with it.
 - **Start over from room 1:** press **N** on the title screen.
+- **Works locally but not on GitHub Pages:** filenames are case-sensitive once deployed, so `Room1.js` and `room1.js` are different files there. Match the case in every import exactly.

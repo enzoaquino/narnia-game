@@ -3802,7 +3802,7 @@ Then open <http://localhost:8000>. The sprite preview page is at <http://localho
 
 ## Run the tests
 
-The tests use Node's built-in test runner (Node 18+, no packages):
+The tests use Node's built-in test runner (Node 22.7 or newer, no packages):
 
 ```sh
 source ~/.nvm/nvm.sh && nvm use 24 >/dev/null && node --test

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { Input } from '../src/engine/input.js';
+import { Input, shouldHandleKeyEvent } from '../src/engine/input.js';
 
 test('arrow keys and WASD map to the same actions', () => {
   const input = new Input();
@@ -62,4 +62,12 @@ test('clear releases everything', () => {
   input.clear();
   assert.equal(input.isDown('up'), false);
   assert.equal(input.wasPressed('up'), false);
+});
+
+test('shortcut chords (Cmd/Ctrl/Alt) are not handled by the game', () => {
+  assert.equal(shouldHandleKeyEvent({ code: 'KeyA' }), true);
+  assert.equal(shouldHandleKeyEvent({ code: 'KeyA', shiftKey: true }), true);
+  for (const mod of ['metaKey', 'ctrlKey', 'altKey']) {
+    assert.equal(shouldHandleKeyEvent({ code: 'KeyA', [mod]: true }), false, mod);
+  }
 });

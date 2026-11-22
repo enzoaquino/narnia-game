@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
 <title>Through the Wardrobe</title>
 <style>
   html, body { margin: 0; height: 100%; background: #000; }
@@ -24,6 +25,6 @@
   window.addEventListener('error', (e) => showBootError(e.message || 'Something failed to load.'));
 </script>
 <script type="module" src="src/main.js"
-  onerror="showBootError('Could not load the game. If you opened index.html directly, run a local server instead (see README.md).')"></script>
+  onerror="showBootError('Could not load the game. A game file may be missing or misnamed, or the page was opened directly from disk — see README.md.')"></script>
 </body>
 </html>
