@@ -24,8 +24,10 @@ A small top-down action-adventure game in the style of classic overhead Zelda, t
 python3 -m http.server 8000      # then open http://localhost:8000
                                  # sprite preview: http://localhost:8000/sprites.html
 
-# Tests: Node's built-in runner. Node comes from nvm and isn't on PATH by default.
-source ~/.nvm/nvm.sh && node --test tests/
+# Tests: Node's built-in runner finds tests/*.test.js automatically.
+# Node comes from nvm and isn't on PATH; nvm's default alias is broken here, so pick 24 explicitly.
+source ~/.nvm/nvm.sh && nvm use 24 >/dev/null && node --test
+# One file: ... && node --test tests/collision.test.js   (a bare directory like tests/ does NOT work)
 ```
 
 ## Architecture rules
@@ -57,7 +59,7 @@ Sprites are 16×16 arrays of strings, one character per pixel, with a palette ma
 ## Verification
 
 Before calling anything done:
-1. `node --test tests/` passes. Add or adjust tests for any logic change.
+1. The full test command passes. Add or adjust tests for any logic change.
 2. Load the game in a real browser, play the affected part, and check screenshots. Passing tests don't prove the game renders or plays correctly.
 3. For room changes, walk through that room's `PLAYTEST.md` section.
 
