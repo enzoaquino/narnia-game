@@ -40,16 +40,25 @@
     ['snow', 'rock', 'path', 'lamppost', 'snow', 'snow'],
     ['snow', 'snow', 'path', 'path', 'path', 'snow'],
   ];
-  const tiling = document.createElement('canvas');
-  tiling.width = 6 * 16 * 4;
-  tiling.height = 3 * 16 * 4;
-  const tctx = tiling.getContext('2d');
-  tctx.imageSmoothingEnabled = false;
-  patch.forEach((row, r) => row.forEach((name, c) => {
-    tctx.drawImage(cache.get('snow'), c * 64, r * 64, 64, 64);
-    tctx.drawImage(cache.get(name), c * 64, r * 64, 64, 64);
-  }));
-  section('Tiling check (4×)').append(tiling);
+  const tilingGrid = section('Tiling check (4×)');
+  try {
+    const tiling = document.createElement('canvas');
+    tiling.width = 6 * 16 * 4;
+    tiling.height = 3 * 16 * 4;
+    const tctx = tiling.getContext('2d');
+    tctx.imageSmoothingEnabled = false;
+    patch.forEach((row, r) => row.forEach((name, c) => {
+      tctx.drawImage(cache.get('snow'), c * 64, r * 64, 64, 64);
+      tctx.drawImage(cache.get(name), c * 64, r * 64, 64, 64);
+    }));
+    tilingGrid.append(tiling);
+  } catch (err) {
+    // A broken tiling sprite must not stop the per-sprite sections below.
+    const div = document.createElement('div');
+    div.className = 'error';
+    div.textContent = `Tiling check\n${err.message}`;
+    tilingGrid.append(div);
+  }
 
   for (const [group, names] of Object.entries(SPRITE_GROUPS)) {
     const grid = section(group);
