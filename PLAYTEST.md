@@ -4,7 +4,7 @@ Run through the general checks and the section for any room you changed. Serve l
 
 ## General
 - [ ] Title screen shows; Space starts; N starts a new game when a save exists.
-- [ ] Refreshing mid-game returns to the title with "continue (room N)".
+- [ ] Refreshing mid-game returns to the title. Once there are 2+ rooms, refreshing in room 2 or later offers "continue (room N)" and "Press N for a new game".
 - [ ] Text is crisp; pixels are sharp; the page doesn't scroll when using arrow keys or Space.
 - [ ] Losing all hearts shows "Try again" and restarts the current room at full health.
 - [ ] Finishing the last room shows the victory screen; Space starts over from room 1.

@@ -1,6 +1,6 @@
 # Through the Wardrobe
 
-A small top-down adventure game based on *The Lion, the Witch and the Wardrobe*, made for a school project. There are five rooms, and each one is a single screen with a locked exit you have to earn the key for.
+A small top-down adventure game based on *The Lion, the Witch and the Wardrobe*, made for a school project. The game is planned as five rooms, and Room 1 is built so far. Each room is a single screen with a locked exit you have to earn the key for.
 
 ## Play it locally
 
@@ -46,7 +46,7 @@ source ~/.nvm/nvm.sh && nvm use 24 >/dev/null && node --test
 ## Add a room
 
 1. Copy `src/rooms/room1-lantern-waste.js` to `src/rooms/room2-<name>.js`.
-2. Draw the map with characters: 11 rows of 16. `W` is the entrance, `X` is the locked exit, `T` a tree, `R` a rock, `.` snow, `,` path.
+2. Draw the map with characters: 11 rows of 16. `W` is the entrance, `X` is the locked exit, `T` a tree, `R` a rock, `L` a lamp-post, `.` snow, `,` path.
 3. List the characters and enemies in `entities`, and add rules in `hooks`. For example, `onEnemiesCleared` can give the key.
 4. Import the room in `src/rooms/index.js` and add it to `ROOMS`.
 5. Run the tests and play it. A mistake in the map shows a readable error instead of the game.
