@@ -1,0 +1,81 @@
+// HUD and pickup items (8×8) and Lucy's sword (8×12 vertical, 12×8 horizontal).
+export const ITEM_SPRITES = {
+  heart_full: {
+    rows: [
+      '.kk.kk..',
+      'kwekeek.',
+      'keeeeek.',
+      'keeeeek.',
+      '.keeek..',
+      '..kek...',
+      '...k....',
+      '........',
+    ],
+  },
+  heart_half: {
+    rows: [
+      '.kk.kk..',
+      'kwekEEk.',
+      'keeeEEk.',
+      'keeeEEk.',
+      '.keeEk..',
+      '..kek...',
+      '...k....',
+      '........',
+    ],
+  },
+  heart_empty: {
+    rows: [
+      '.kk.kk..',
+      'kEEkEEk.',
+      'kEEEEEk.',
+      'kEEEEEk.',
+      '.kEEEk..',
+      '..kEk...',
+      '...k....',
+      '........',
+    ],
+  },
+  key: {
+    rows: [
+      '........',
+      '.kkk....',
+      'kyyykkkk',
+      'kykyyyyk',
+      'kyyykYYk',
+      '.kkk.kkk',
+      '........',
+      '........',
+    ],
+  },
+  sword_up: {
+    rows: [
+      '...kk...',
+      '..kwRk..',
+      '..kwRk..',
+      '..kwRk..',
+      '..kwRk..',
+      '..kwRk..',
+      '..kwRk..',
+      '.kYyyYk.',
+      'kYYyyYYk',
+      '...nn...',
+      '...nn...',
+      '...kk...',
+    ],
+  },
+  sword_down: { flipOf: 'sword_up' },
+  sword_right: {
+    rows: [
+      '...k........',
+      '...Yk.......',
+      '...YYkkkkkk.',
+      'knnyywwwwwwk',
+      'knnyyRRRRRRk',
+      '...YYkkkkkk.',
+      '...Yk.......',
+      '...k........',
+    ],
+  },
+  sword_left: { mirrorOf: 'sword_right' },
+};

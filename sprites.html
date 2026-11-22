@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sprite Preview</title>
+<style>
+  body { margin: 16px; background: #1b1f2a; color: #e8f0f8; font: 14px system-ui, sans-serif; }
+  .grid { display: flex; flex-wrap: wrap; gap: 12px; }
+  figure { margin: 0; padding: 8px; background: #2a3040; border-radius: 6px; text-align: center; }
+  canvas { display: block; image-rendering: pixelated; }
+  figcaption { margin-top: 6px; font: 12px monospace; }
+  .error { color: #ff9aa8; white-space: pre-wrap; font-family: monospace; }
+</style>
+</head>
+<body>
+<h1>Sprite preview</h1>
+<p>Each sprite at 6×, on snow (left) and on dark (right). Serve the project locally (see README) to view this page.</p>
+<main id="out"></main>
+<script type="module">
+  import { SPRITES, PALETTE, SPRITE_GROUPS } from './src/art/index.js';
+  import { createSpriteCache } from './src/engine/sprites.js';
+
+  const ZOOM = 6;
+  const out = document.getElementById('out');
+  const cache = createSpriteCache(SPRITES, PALETTE);
+
+  function section(title) {
+    const h2 = document.createElement('h2');
+    h2.textContent = title;
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    out.append(h2, grid);
+    return grid;
+  }
+
+  // Tiling check: a small patch of floor with a tree, rock and lamp-post.
+  const patch = [
+    ['snow', 'snow', 'path', 'snow', 'snow', 'tree'],
+    ['snow', 'rock', 'path', 'lamppost', 'snow', 'snow'],
+    ['snow', 'snow', 'path', 'path', 'path', 'snow'],
+  ];
+  const tiling = document.createElement('canvas');
+  tiling.width = 6 * 16 * 4;
+  tiling.height = 3 * 16 * 4;
+  const tctx = tiling.getContext('2d');
+  tctx.imageSmoothingEnabled = false;
+  patch.forEach((row, r) => row.forEach((name, c) => {
+    tctx.drawImage(cache.get('snow'), c * 64, r * 64, 64, 64);
+    tctx.drawImage(cache.get(name), c * 64, r * 64, 64, 64);
+  }));
+  section('Tiling check (4×)').append(tiling);
+
+  for (const [group, names] of Object.entries(SPRITE_GROUPS)) {
+    const grid = section(group);
+    for (const name of names) {
+      const fig = document.createElement('figure');
+      try {
+        const img = cache.get(name);
+        const w = img.width * ZOOM;
+        const h = img.height * ZOOM;
+        const c = document.createElement('canvas');
+        c.width = w * 2 + ZOOM;
+        c.height = h;
+        const ctx = c.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+        ctx.fillStyle = PALETTE.s;
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = '#10141f';
+        ctx.fillRect(w + ZOOM, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        ctx.drawImage(img, w + ZOOM, 0, w, h);
+        const cap = document.createElement('figcaption');
+        cap.textContent = `${name} (${img.width}×${img.height})`;
+        fig.append(c, cap);
+      } catch (err) {
+        const div = document.createElement('div');
+        div.className = 'error';
+        div.textContent = `${name}\n${err.message}`;
+        fig.append(div);
+      }
+      grid.append(fig);
+    }
+  }
+</script>
+</body>
+</html>
