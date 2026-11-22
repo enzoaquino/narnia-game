@@ -60,6 +60,7 @@ added later as data files once the outline arrives.
 | Attack (sword) | Space |
 | Interact / advance dialogue | E or Enter |
 | Start / confirm on title & victory screens | Space or Enter |
+| New game (title screen only) | N |
 
 ### Player (Lucy)
 - Moves in 4 directions at a fixed speed; diagonal input allowed, normalized
@@ -137,43 +138,48 @@ This will be replaced by the kids' version once the outline is ready.
 ## Architecture
 
 ```
-index.html              canvas + <script type="module" src="src/main.js">
-sprites.html            sprite preview page (every sprite, scaled up, labeled)
+index.html                     page shell, boot-error fallback, loads src/main.js
+sprites.html                   sprite preview page
+.gitignore
 src/
-  main.js               boot; owns the fixed-timestep game loop (update 60 Hz, render per frame)
-  config.js             tile size, room dimensions, speeds, timings
+  config.js                    all tunable numbers
+  main.js                      boot, content checks, fixed-timestep loop, game context
   engine/
-    input.js            keyboard state → actions: isDown(action), wasPressed(action)
-    renderer.js         canvas setup, integer scaling, drawTile/drawSprite/drawText/drawRect
-    sprites.js          parse pixel-grid strings + palettes → cached offscreen canvases
-    collision.js        AABB overlap, box-vs-solid-tiles, move-and-slide
-    scenes.js           scene stack (push/pop/replace); top scene gets input
-    save.js             localStorage wrapper (safe when storage is blocked)
+    collision.js               overlaps, boxHitsSolid, moveAndSlide (+ corner nudge)
+    input.js                   Input (key→action state), attachKeyboard (DOM)
+    sprites.js                 parseSprite, flipH, flipV, resolveSprite, createSpriteCache (DOM)
+    text.js                    wrapText
+    scenes.js                  SceneStack
+    save.js                    createSave (localStorage, safe)
+    renderer.js                Renderer (canvas, scaling, sprite/rect/text, error screen)
   game/
-    player.js           movement, facing, sword hitbox, damage/knockback/invulnerability
-    enemies.js          enemy behavior types (wolf: wander + chase)
-    npc.js              NPC entity: face player, talk on E, mutable dialogue
-    items.js            key, heart pickups
-    door.js             entrance, locked exit
-    hud.js              hearts + held items
-    dialogue.js         dialogue box scene/overlay
-    room.js             build a live room from a room definition; run hooks; validate
-    scenes/
-      title.js
-      play.js
-      victory.js
+    direction.js               DIRS, facingFromVector, chooseFacing
+    roomdef.js                 DEFAULT_LEGEND, ENTITY_TYPES, validateRoomDef, parseRoomDef, RoomError, legendFor
+    player.js                  Player
+    enemies.js                 Wolf
+    npc.js                     Npc
+    items.js                   Pickup (key, heart)
+    room.js                    Room runtime (entities, combat, hooks, exit)
+    dialogue.js                paginate, DialogueScene
+    hud.js                     heartStates, drawHud
+    roomview.js                drawRoom
+    scenes/title.js            TitleScene
+    scenes/play.js             PlayScene
+    scenes/victory.js          VictoryScene
   art/
-    palette.js          shared color palette
-    tiles.js            snow, tree, rock, path, wardrobe, lamp-post, door (locked/open)
-    characters.js       Lucy, Tumnus, wolf (4 directions, 2-frame walk)
-    items.js            heart (full/half/empty for HUD), key
+    palette.js                 PALETTE (shared colors)
+    tiles.js                   TILE_SPRITES
+    characters.js              CHARACTER_SPRITES
+    items.js                   ITEM_SPRITES (hearts, key, swords)
+    index.js                   SPRITES, PALETTE, SPRITE_GROUPS
   rooms/
-    index.js            ordered list of room definitions
+    index.js                   ROOMS (play order)
     room1-lantern-waste.js
 tests/
-  *.test.js             node --test
-PLAYTEST.md             manual checklist per room
-README.md               how to run locally, deploy, and add a room
+  helpers.js                   shared fixtures (not a test file)
+  *.test.js
+README.md
+PLAYTEST.md
 ```
 
 ### Separation rule
@@ -266,7 +272,7 @@ A failure stops the game and draws a readable error message on the canvas
 ## Testing
 
 **Automated** — Node's built-in test runner (`node --test`), no npm
-dependencies. Requires Node 18+ (available via nvm).
+dependencies. Run with `source ~/.nvm/nvm.sh && nvm use 24 >/dev/null && node --test`.
 - Collision: AABB overlap; move-and-slide along walls; no corner sticking.
 - Room validation: bad size, unknown char, missing/duplicate entrance or
   exit, entity on a solid tile.
