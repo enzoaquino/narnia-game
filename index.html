@@ -72,7 +72,59 @@
   }
   window.addEventListener('error', (e) => showBootError(e.message || 'Something failed to load.'));
 </script>
-<script type="module" src="src/main.js"
-  onerror="showBootError('Could not load the game. A game file may be missing or misnamed, or the page was opened directly from disk — see README.md.')"></script>
+<script>
+  // Version tag: every game file loads as src/<file>?v=VERSION, so after an update a
+  // browser fetches the new set instead of mixing in old cached files.
+  // Change VERSION whenever you push a change players will see (e.g. the date + a letter).
+  // MODULES must list every .js file under src/ (a test checks it).
+  const VERSION = '2026-11-23a';
+  const MODULES = [
+    'art/characters.js',
+    'art/index.js',
+    'art/items.js',
+    'art/palette.js',
+    'art/tiles.js',
+    'config.js',
+    'engine/collision.js',
+    'engine/input.js',
+    'engine/renderer.js',
+    'engine/save.js',
+    'engine/scenes.js',
+    'engine/sprites.js',
+    'engine/text.js',
+    'engine/touch.js',
+    'game/dialogue.js',
+    'game/direction.js',
+    'game/enemies.js',
+    'game/hud.js',
+    'game/items.js',
+    'game/npc.js',
+    'game/player.js',
+    'game/room.js',
+    'game/roomdef.js',
+    'game/roomview.js',
+    'game/scenes/play.js',
+    'game/scenes/title.js',
+    'game/scenes/victory.js',
+    'main.js',
+    'rooms/index.js',
+    'rooms/room1-lantern-waste.js',
+  ];
+
+  // The import map rewrites each module's own imports (./config.js etc.) to the tagged
+  // address. Browsers without import maps (iOS before 16.4) simply load untagged files.
+  const importMap = document.createElement('script');
+  importMap.type = 'importmap';
+  importMap.textContent = JSON.stringify({
+    imports: Object.fromEntries(MODULES.map((m) => [`./src/${m}`, `./src/${m}?v=${VERSION}`])),
+  });
+  document.head.append(importMap);
+
+  const main = document.createElement('script');
+  main.type = 'module';
+  main.src = `src/main.js?v=${VERSION}`;
+  main.onerror = () => showBootError('Could not load the game. A game file may be missing or misnamed, or the page was opened directly from disk — see README.md.');
+  document.body.append(main);
+</script>
 </body>
 </html>

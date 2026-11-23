@@ -26,6 +26,7 @@ added later as data files once the outline arrives.
 - In-code pixel-art sprites and a sprite preview page.
 - Automated tests for non-rendering logic; manual playtest checklist.
 - Static hosting on GitHub Pages.
+- Cache-safe updates: one `VERSION` tag in `index.html` (applied to every module through an import map), so a browser loads each release as a whole.
 
 **Out of scope (for now)**
 - Rooms 2–5 content.
@@ -155,7 +156,8 @@ This will be replaced by the kids' version once the outline is ready.
 ## Architecture
 
 ```
-index.html                     page shell, boot-error fallback, loads src/main.js
+index.html                     page shell, boot-error fallback, touch controls, version tag
+                               (VERSION + MODULES → import map, loads src/main.js?v=VERSION)
 sprites.html                   sprite preview page
 .gitignore
 src/
@@ -321,5 +323,5 @@ before any work is called done.
 1. Copy `src/rooms/room1-lantern-waste.js` to `roomN-<name>.js`.
 2. Edit the map, entities, and hooks.
 3. Add any new sprites to `src/art/` and check them in `sprites.html`.
-4. Add the room to `src/rooms/index.js`.
+4. Add the room to `src/rooms/index.js`, and its file to `MODULES` in `index.html`.
 5. Add a section to `PLAYTEST.md` and play through it.

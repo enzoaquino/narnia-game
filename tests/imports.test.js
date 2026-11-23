@@ -49,3 +49,27 @@ test('the case check itself catches a wrong-case name', () => {
   assert.equal(exactCaseExists(join(SRC, 'config.js')), true);
   assert.equal(exactCaseExists(join(SRC, 'Config.js')), false);
 });
+
+// index.html loads every module as `src/<file>?v=VERSION` (an import map), so a phone
+// never mixes cached old files with new ones. The list there must match src/ exactly.
+function versioning() {
+  const html = readFileSync(join(ROOT, 'index.html'), 'utf8');
+  const version = html.match(/const VERSION = '([^']+)'/)?.[1];
+  const list = html.match(/const MODULES = \[([\s\S]*?)\]/)?.[1];
+  const modules = list ? [...list.matchAll(/'([^']+)'/g)].map((m) => m[1]) : [];
+  return { version, modules };
+}
+
+test('index.html lists every module in src/ for the version tag, and nothing else', () => {
+  const { modules } = versioning();
+  const actual = jsFiles(SRC).map((f) => f.slice(SRC.length + 1).split(sep).join('/')).sort();
+  const missing = actual.filter((m) => !modules.includes(m));
+  const extra = modules.filter((m) => !actual.includes(m));
+  assert.deepEqual({ missing, extra }, { missing: [], extra: [] },
+    'update MODULES in index.html: add new files under src/, remove deleted ones');
+  assert.equal(new Set(modules).size, modules.length, 'a module is listed twice');
+});
+
+test('index.html has a VERSION for cache-busting', () => {
+  assert.match(versioning().version ?? '', /^[\w.-]+$/);
+});

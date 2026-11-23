@@ -49,7 +49,7 @@ When a room needs something new, prefer adding a hook, a room-API method, or a n
 1. Copy `src/rooms/room1-lantern-waste.js` to `roomN-<name>.js`.
 2. Edit the map, entities and hooks.
 3. Add any new sprites in `src/art/` and check them in `sprites.html`.
-4. Register the room in `src/rooms/index.js` (the order there is the play order).
+4. Register the room in `src/rooms/index.js` (the order there is the play order), and add the file to `MODULES` in `index.html`.
 5. Add a section to `PLAYTEST.md`, then play through the room in the browser.
 
 ## Art
@@ -67,3 +67,4 @@ Before calling anything done:
 
 - Work on `main` unless asked otherwise. Commit in small, logical steps.
 - **Never push or add a remote without asking.** The GitHub repo and Pages setup are the user's call.
+- **Version tag:** `index.html` loads every module as `src/<file>?v=VERSION` via an import map, so browsers don't mix cached old files with new ones. Bump `VERSION` (date + letter) in any change players will see, and keep `MODULES` in step with `src/` (`tests/imports.test.js` checks it).

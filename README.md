@@ -37,6 +37,8 @@ source ~/.nvm/nvm.sh && nvm use 24 >/dev/null && node --test
 2. In the repo, open **Settings → Pages**, choose **Deploy from a branch**, then pick `main` and `/ (root)`.
 3. After a minute the game is live at `https://<username>.github.io/<repo>/`.
 
+**Updating the live game:** before pushing a change players will see, change `VERSION` near the bottom of `index.html` (for example to today's date plus a letter: `2026-11-24a`). Browsers then fetch the whole new version instead of mixing in old cached files. If you forget, nothing breaks: phones may just show the old version, or a mix of old and new files, for up to about 10 minutes.
+
 ## How it's organised
 
 - `src/engine/` is reusable plumbing: input, drawing, sprites, collision, scenes and saving.
@@ -51,7 +53,8 @@ source ~/.nvm/nvm.sh && nvm use 24 >/dev/null && node --test
 2. Draw the map with characters: 11 rows of 16. `W` is the entrance, `X` is the locked exit, `T` a tree, `R` a rock, `L` a lamp-post, `.` snow, `,` path.
 3. List the characters and enemies in `entities`, and add rules in `hooks`. For example, `onEnemiesCleared` can give the key.
 4. Import the room in `src/rooms/index.js` and add it to `ROOMS`.
-5. Run the tests and play it. A mistake in the map shows a readable error instead of the game.
+5. Add the new file to `MODULES` in `index.html` (the tests remind you if you forget).
+6. Run the tests and play it. A mistake in the map shows a readable error instead of the game.
 
 ## Edit a sprite
 
